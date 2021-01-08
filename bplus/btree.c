@@ -18,22 +18,53 @@ struct BTree {
 	struct Node* root;
 };
 
-void insert(int inputVal, struct BTree *btree) {
-	if (btree->root == NULL) {
-		struct Node* node=malloc(sizeof(struct Node));
-		node->key[0] = inputVal;
-		printf("%d ", node->key);
-		node->lenKey = 1;
-		node->t = btree->t;
-		node->isLeaf = true;
-		btree->root = node;
+void insert(int inputVal, struct BTree *btree, struct Node *node) {
+	
+	if (node == NULL) {
+		struct Node* newNode=malloc(sizeof(struct Node));
+		int array[(btree->t)*2];
+
+		newNode->key = array;
+		array[0]=inputVal;
+
+		newNode->lenKey = 1;
+		newNode->t = btree->t;
+		newNode->isLeaf = true;
+		btree->root = newNode;
+
+	}else if (node->lenKey < 2*(btree->t)-1){
+		for (int i=node->lenKey; i>=0;i--){
+			
+			if (node->key[i] >= inputVal){
+				node->key[i+1]=node->key[i];
+				
+			}else{
+				node->key[i+1] = inputVal;
+				break;
+			}
+			if(i==0){
+				node->key[i]=inputVal;
+			}
+		}
+		//node->lenKey += 1;
 	}
+
+
 }
 
 int main() {
 	struct BTree* btree=malloc(sizeof(struct BTree));
 	btree->root = NULL;
 	btree->t = 3;
-	insert(1, btree);
-	printf("%d", btree->root->key);
+	insert(8, btree,btree->root);
+	insert(7, btree,btree->root);
+	insert(6, btree,btree->root);
+	insert(5, btree,btree->root);
+	insert(4, btree,btree->root);
+	insert(3, btree,btree->root);
+
+	printf("%d\n", btree->root->key[0]);
+	printf("%d\n", btree->root->key[1]);
+	printf("%d\n", btree->root->key[2]);
+	
 }
