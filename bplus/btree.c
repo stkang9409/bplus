@@ -31,8 +31,11 @@ void insert(int inputVal, struct BTree *btree, struct Node *node) {
 		newNode->t = btree->t;
 		newNode->isLeaf = true;
 		btree->root = newNode;
+		
 
-	}else if (node->lenKey < 2*(btree->t)-1){
+	}else if (node->lenKey <= 2*(btree->t)-1){
+		// printf("%d\n", inputVal);
+
 		for (int i=node->lenKey; i>=0;i--){
 			
 			if (node->key[i] >= inputVal){
@@ -40,22 +43,30 @@ void insert(int inputVal, struct BTree *btree, struct Node *node) {
 				
 			}else{
 				node->key[i+1] = inputVal;
+
 				break;
 			}
 			if(i==0){
 				node->key[i]=inputVal;
+
 			}
 		}
-		//node->lenKey += 1;
-	}
+		
+		node->lenKey += 1;
 
+	    printf("1\n");
+		// if(node->lenKey > 2*(node->t)-1){
+		// 	printf("need to split\n");
+		// }
+	}
+ 
 
 }
 
 int main() {
 	struct BTree* btree=malloc(sizeof(struct BTree));
 	btree->root = NULL;
-	btree->t = 3;
+	btree->t = 3; // 2t-2 
 	insert(8, btree,btree->root);
 	insert(7, btree,btree->root);
 	insert(6, btree,btree->root);
@@ -66,5 +77,10 @@ int main() {
 	printf("%d\n", btree->root->key[0]);
 	printf("%d\n", btree->root->key[1]);
 	printf("%d\n", btree->root->key[2]);
-	
+	printf("%d\n", btree->root->key[3]);
+	printf("%d\n", btree->root->key[4]);
+
+
+
+
 }
