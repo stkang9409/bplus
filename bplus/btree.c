@@ -263,7 +263,7 @@ int DeleteSucc(struct BTREE* tree, struct Node* node) {
         node->lenKey--;
         return succ;
     }
-    while (curr->C[1]->isLeaf != true) {
+    while (curr->C[1]->isLeaf!= true) {
         curr = curr->C[1]; //이건 맞음
     }
     succ = curr->C[1]->key[1];
