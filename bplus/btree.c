@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#define MinDeg 5
+#define MinDeg 7
 struct Node {
     struct Node* C[2 * MinDeg + 1];
     bool isLeaf;
@@ -33,25 +33,34 @@ void BtreeSearch(struct Node* node, int searchValue, int level);
 void print_by_dfs(struct Node* node, int cnt) ;
 
 int main() {
-    struct BTREE* BTree = malloc(sizeof(struct BTREE));
+    struct BTREE *BTree = malloc(sizeof(struct BTREE));
     BtreeCreate(BTree);
-    for (int i = 1; i < 300; i++)
-    {
+
+//    int array[35] = {4,5,6,
+//                     10,14,15,
+//                     16,20,27,
+//                     50,51,52,
+//                     60,65,68,
+//                     70,73,75,
+//                     77,78,79,
+//                     80,81,82,89,90,92,93,95,100,110,111};
+//
+
+    for (int i = 1; i < 500; i++){
         BtreeInsertNode(BTree, i);
     }
-    DeleteBTree(BTree, BTree->root, 140);
-    DeleteBTree(BTree, BTree->root, 130);
 
-//    DeleteBTree(BTree, BTree->root, 9);
-//    DeleteBTree(BTree, BTree->root, 12);
-//    DeleteBTree(BTree, BTree->root, 15);
-//    DeleteBTree(BTree, BTree->root, 17);
-//    DeleteBTree(BTree, BTree->root, 1);
-//
-    for (int j = 1; j < 300; j++)
-    {
+    for (int i = 100; i < 400; i++) {
+        printf("==========del %d ======\n",i);
 
-        BtreeSearch(BTree->root, j, 0);
+
+        DeleteBTree(BTree, BTree->root, i);
+        for (int j = 1; j < 500; j++) {
+
+            BtreeSearch(BTree->root, j, 0);
+
+        }
+
     }
 //    print_by_dfs(BTree->root,0);
 
@@ -90,7 +99,7 @@ void BtreeSearch(struct Node* node, int searchValue, int level) {
         return;
     }
     else if (node->isLeaf == true) {
-        printf("%d NULL in %d\n", searchValue, level);
+        printf("%d NULL\n", searchValue);
         return;
     }
     else {
@@ -280,17 +289,15 @@ void DeleteMerge(struct BTREE* tree, struct Node* parentNode, int targetCidx, in
     return;
 }
 int DeletePred(struct BTREE* tree, struct Node* node) {
-
+    //predecessor 전임
     int pred;
     struct Node* curr = node;
     if (node->isLeaf == true) {
         pred = node->key[node->lenKey];
-
-        ///???///
-
         node->lenKey--;
         return pred;
     }
+//    curr = curr->C[curr->lenKey];
     while (curr->C[curr->lenKey + 1]->isLeaf != true) {
         curr = curr->C[curr->lenKey + 1];
     }
@@ -300,7 +307,7 @@ int DeletePred(struct BTREE* tree, struct Node* node) {
     return pred;
 }
 int DeleteSucc(struct BTREE* tree, struct Node* node) {
-
+    //Successor
     int succ;
     struct Node* curr = node;
     if (node->isLeaf == true) {
@@ -311,6 +318,7 @@ int DeleteSucc(struct BTREE* tree, struct Node* node) {
         node->lenKey--;
         return succ;
     }
+//    curr = curr->C[curr->lenKey+1];
     while (curr->C[1]->isLeaf!= true) {
         curr = curr->C[1]; //이건 맞음
     }
@@ -335,6 +343,7 @@ void DeleteInternalNode(struct BTREE* tree, struct Node* curNode, int dVal, int 
         // 일단 갖고 오고나서 삭제하기
         if (curNode->C[targetIdx]->lenKey > MinDeg - 1) {
             curNode->key[targetIdx] = DeletePred(tree, curNode->C[targetIdx]);
+            //curNode->lenKey++;
         }
         else if (curNode->C[targetIdx + 1]->lenKey > MinDeg - 1) {
             curNode->key[targetIdx] = DeleteSucc(tree, curNode->C[targetIdx + 1]);
@@ -367,12 +376,12 @@ void DeleteBTree(struct BTREE* tree, struct Node* curNode, int dVal) {
             curNode->lenKey--;
             return;
         }
-        printf("값 %d을 찾을 수가 없음", dVal);
+        printf("값 %d을 찾을 수가 없음======================\n", dVal);
         return;
     }
     else {
 
-        if (curNode->key[i] == dVal) {
+        if (curNode->key[i] == dVal && i<=curNode->lenKey) {
             DeleteInternalNode(tree, curNode, dVal, i);
             return;
         }
