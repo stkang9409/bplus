@@ -518,7 +518,7 @@ int DeleteFromTree(struct BTREE* btree, struct Node* curNode, int dVal) {
                 if (curNode->lenKey == 0) {
                     free(curNode);
                 }
-                return;
+                return 0;
             }
             DeleteFromTree(btree, curNode->C[i], dVal);
             if (curNode->lenKey == 0) {
