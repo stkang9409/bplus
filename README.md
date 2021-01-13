@@ -1,8 +1,10 @@
 # B-tree and B+Tree
 
-###sw사관학교 정글 5주차<br>
-C의 포인터만을 사용해서 B-Tree와 B+Tree를 구현<br>
-###reference<br>
+### sw사관학교 정글 5주차
+<br>
+C의 포인터만을 사용해서 B-Tree와 B+Tree를 구현
+<br>
+### reference
 
 <a href="https://www.programiz.com/dsa/b-tree"> B- tree programiz document</a><br>
 <a href="https://www.youtube.com/watch?v=aNU9XYYCHu8&t=365s"> B- tree insertion</a><br>
