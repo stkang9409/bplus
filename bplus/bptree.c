@@ -31,6 +31,10 @@ void Split(struct Node* node, int idx);
 //구조체 선언
 struct BTREE* initTree();
 struct Node* createNode();
+
+
+
+
 int main() {
     int JenCase[12] = { 1,4,7,10,17,21,31,25,19,20,28,42 };
     int Test[8] = { 21,31,20,10,7,25,42,4 };
@@ -39,9 +43,34 @@ int main() {
     struct Node* rootNode = createNode();
     BTree->root = rootNode;
     flag->nextNode = BTree->root;
-    for (int i = 0; i < 90; i++) {
-        InsertToTree(BTree, i);
+
+
+
+    int* out_arr = (int*)malloc(sizeof(int) * 1000);
+    for (int i = 0; i < 1000; i++) {
+        out_arr[i] = i;
     }
+    for (int i = 0; i < 1000; i++)
+    {
+        int j = i + rand() / (RAND_MAX / (1000 - i) + 1);
+        int t = out_arr[j];
+        out_arr[j] = out_arr[i];
+        out_arr[i] = t;
+    }
+    for (int i = 0; i < 1000; i++) {
+        int r = out_arr[i];
+        InsertToTree(BTree, r);
+    }
+    for (int i = 0; i < 100; i++) {
+        int r = out_arr[i];
+        DeleteFromTree(BTree,BTree->root , r);
+    }
+
+
+//
+//    for (int i = 0; i < 90; i++) {
+//        InsertToTree(BTree, i);
+//    }
     PrintTree(BTree, flag);
     return 0;
 }

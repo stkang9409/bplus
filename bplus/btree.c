@@ -31,6 +31,30 @@ void DeleteSibling(struct BTREE* tree, struct Node* parentNode, int targetCidx, 
 int main() {
     struct BTREE* BTree = malloc(sizeof(struct BTREE));
     BtreeCreate(BTree);
+
+    int* out_arr = (int*)malloc(sizeof(int) * 1000);
+    for (int i = 1; i < 1000; i++) {
+        out_arr[i] = i;
+    }
+    for (int i = 1; i < 1000; i++)
+    {
+        int j = i + rand() / (RAND_MAX / (1000 - i) + 1);
+        int t = out_arr[j];
+        out_arr[j] = out_arr[i];
+        out_arr[i] = t;
+    }
+    for (int i = 1; i < 1000; i++) {
+        int r = out_arr[i];
+        BtreeInsertNode(BTree, r);
+    }
+
+    for (int i = 1; i < 1000; i++) {
+
+        int r = out_arr[i];
+        BtreeSearch(BTree->root,r,0);
+        DeleteBTree(BTree,BTree->root , r);
+    }
+
     for (int i = 1; i < 101; i++) {
         BtreeInsertNode(BTree, i);
     }
@@ -164,7 +188,7 @@ int DeletePred(struct BTREE* tree, struct Node* node) {
     while (curr->C[curr->lenKey + 1]->isLeaf != true) {
         curr = curr->C[curr->lenKey + 1];
     }
-    pred = curr->C[curr->lenKey + 1]->key[curr->lenKey];
+    pred = curr->C[curr->lenKey + 1]->key[curr->C[curr->lenKey + 1]->lenKey];
     DeleteBTree(tree, node, pred);
     return pred;
 }
