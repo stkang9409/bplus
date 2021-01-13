@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#define MinDeg 7
+#define MinDeg 3
 struct Node {
     struct Node* C[2 * MinDeg + 1];
     bool isLeaf;
@@ -30,7 +30,7 @@ void BtreeInsertNode(struct BTREE* btree, int inputValue);
 void BtreeInsertNonFull(struct Node* node, int inputValue);
 void BtreeSplitChild(struct Node* ParentNode, int idx);
 void BtreeSearch(struct Node* node, int searchValue, int level);
-void print_by_dfs(struct Node* node, int cnt) ;
+void PrintByDFS(struct Node* node, int cnt) ;
 
 int main() {
     struct BTREE *BTree = malloc(sizeof(struct BTREE));
@@ -62,14 +62,13 @@ int main() {
         }
 
     }
-//    print_by_dfs(BTree->root,0);
+    PrintByDFS(BTree->root,0);
 
 }
-
-void print_by_dfs(struct Node* node, int cnt) {
+void PrintByDFS(struct Node* node, int cnt) {
     if (node->isLeaf) {
         for (int i = 1; i <= cnt; i++) {
-            printf("--------------------|");
+            printf("-------|");
         }
         for (int i = 1; i <= node->lenKey; i++) {
             printf("%4d", node->key[i]);
@@ -78,13 +77,13 @@ void print_by_dfs(struct Node* node, int cnt) {
     }
     else {
         for (int i = 1; i <= node->lenKey; i++) {
-            print_by_dfs(node->C[i], cnt + 1);
-            for (int i = 1; i < cnt; i++) {
-                printf("--------------------|");
+            PrintByDFS(node->C[i], cnt + 1);
+            for (int i = 1; i <= cnt; i++) {
+                printf("-------|");
             }
-            printf("%4d            \n", node->key[i]);
+            printf("%d            \n", node->key[i]);
         }
-        print_by_dfs(node->C[node->lenKey], cnt + 1);
+        PrintByDFS(node->C[node->lenKey + 1], cnt + 1);
     }
 }
 

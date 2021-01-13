@@ -21,13 +21,13 @@ void DeleteSibling(struct BTREE* btree, struct Node* parentNode, int targetCidx,
 void DeleteMergeForLeaf(struct BTREE* btree, struct Node* parentNode, int targetCidx, int siblingCidx);
 void DeleteSiblingForLeaf(struct BTREE* btree, struct Node* parentNode, int targetCidx, int siblingCidx);
 void DeleteIndex(struct BTREE* btree, struct Node* node, int dVal, int targetIdx);
-int DeleteFromTree(struct BTREE* btree, struct Node* node, int dVal);
+void DeleteFromTree(struct BTREE* btree, struct Node* node, int dVal);
 
 //확인 함수
 void BtreeDataSearch(struct Node* node);
 void BtreeSearch(struct Node* node, int searchValue, int level);
 void PrintByDFS(struct Node* node, int cnt);
-void printTree(struct Node* node, int cnt);
+void PrintTree(struct BTREE* Btree, struct Node* flag);
 
 //삽입함수
 void InsertData(struct Node* node, int inputVal);
@@ -50,28 +50,35 @@ int main() {
         InsertToTree(BTree, i);
     }
 
-    BtreeDataSearch(flag->nextNode);
-    printf("\n\n");
-    PrintByDFS(BTree->root, 0);
-    printf("\n\n");
-    DeleteFromTree(BTree, BTree->root, 15);
-    BtreeDataSearch(flag->nextNode);
-    printf("\n\n");
-    PrintByDFS(BTree->root, 0);
-    printf("\n\n");
-    DeleteFromTree(BTree, BTree->root, 47);
-    BtreeDataSearch(flag->nextNode);
-    printf("\n\n");
-    PrintByDFS(BTree->root, 0);
-    printf("\n\n");
-    DeleteFromTree(BTree, BTree->root, 31);
-    BtreeDataSearch(flag->nextNode);
-    printf("\n\n");
-    PrintByDFS(BTree->root, 0);
-    printf("\n\n");
+    PrintTree(BTree, flag);
 
     return 0;
 }
+
+// 구조체 초기화
+struct BTREE* initTree() {
+    struct BTREE* tree = malloc(sizeof(struct BTREE));
+    if (tree == NULL) {
+        printf("메모리 할당 오류");
+        return 0 ;
+    }
+    tree->root = MIN;
+    return tree;
+}
+struct Node* createNode() {
+    struct Node* newNode = malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("메모리 할당 오류");
+        return 0 ;
+    }
+    newNode->isLeaf = true;
+    newNode->lenKey = 0;
+    newNode->nextNode = MIN;
+    return newNode;
+}
+
+// 데이터 탐색
+//순차탐색
 void BtreeDataSearch(struct Node* node) {
     for (int i = 1; i <= node->lenKey; i++) {
         printf("%d ", node->key[i]);
@@ -81,6 +88,7 @@ void BtreeDataSearch(struct Node* node) {
         BtreeDataSearch(node->nextNode);
     }
 }
+//하나 찾기
 void BtreeSearch(struct Node* node, int searchValue, int level) {
     int i = 1;
     while (i <= node->lenKey && searchValue > node->key[i]) {
@@ -105,18 +113,38 @@ void BtreeSearch(struct Node* node, int searchValue, int level) {
         BtreeSearch(node->C[i], searchValue, level + 1);
     }
 }
-struct BTREE* initTree() {
-    struct BTREE* tree = malloc(sizeof(struct BTREE));
-    tree->root = MIN;
-    return tree;
+void PrintByDFS(struct Node* node, int cnt) {
+    if (node->isLeaf) {
+        for (int i = 1; i <= cnt; i++) {
+            printf("--------------------|");
+        }
+        for (int i = 1; i <= node->lenKey; i++) {
+            printf("%4d", node->key[i]);
+        }
+        printf("\n");
+    }
+    else {
+        for (int i = 1; i <= node->lenKey; i++) {
+            PrintByDFS(node->C[i], cnt + 1);
+            for (int i = 1; i <= cnt; i++) {
+                printf("--------------------|");
+            }
+            printf("%d            \n", node->key[i]);
+        }
+        PrintByDFS(node->C[node->lenKey + 1], cnt + 1);
+    }
 }
-struct Node* createNode() {
-    struct Node* newNode = malloc(sizeof(struct Node));
-    newNode->isLeaf = true;
-    newNode->lenKey = 0;
-    newNode->nextNode = MIN;
-    return newNode;
+void PrintTree(struct BTREE* BTree, struct Node* flag) {
+
+    printf("데이터 순차탐색:\n");
+    BtreeDataSearch(flag->nextNode);
+    printf("\n\n트리 시각화: \n");
+    PrintByDFS(BTree->root, 0);
+    printf("\n\n");
+
 }
+
+//데이터 삽입
 void Split(struct Node* node, int idx) {
     struct Node* rightNode = createNode();
     struct Node* leftNode = node->C[idx];
@@ -160,46 +188,7 @@ void Split(struct Node* node, int idx) {
         node->key[idx] = leftNode->key[T];
         node->lenKey += 1;
     }
-    // 리프인 경우
-    // 아닌 경우
     return;
-}
-
-void printTree(struct Node* node, int cnt) {
-
-    int countNode;
-
-    if (node->isLeaf) {
-        printf("%d ", node->lenKey);
-    }
-    else {
-
-        printTree(node->C[node->lenKey + 1], cnt + 1);
-
-    }
-
-}
-
-void PrintByDFS(struct Node* node, int cnt) {
-    if (node->isLeaf) {
-        for (int i = 1; i <= cnt; i++) {
-            printf("--------------------|");
-        }
-        for (int i = 1; i <= node->lenKey; i++) {
-            printf("%4d", node->key[i]);
-        }
-        printf("\n");
-    }
-    else {
-        for (int i = 1; i <= node->lenKey; i++) {
-            PrintByDFS(node->C[i], cnt + 1);
-            for (int i = 1; i <= cnt; i++) {
-                printf("--------------------|");
-            }
-            printf("%d            \n", node->key[i]);
-        }
-        PrintByDFS(node->C[node->lenKey + 1], cnt + 1);
-    }
 }
 void InsertData(struct Node* node, int inputVal) {
     // 인덱스 찾기
@@ -248,6 +237,7 @@ void InsertToTree(struct BTREE* tree, int inputVal) {
     }
 }
 
+//데이터 삭제
 void DeleteMergeForLeaf(struct BTREE* btree, struct Node* parentNode, int targetCidx, int siblingCidx) {
     struct Node* leftNode;
     struct Node* rightNode;
@@ -256,14 +246,12 @@ void DeleteMergeForLeaf(struct BTREE* btree, struct Node* parentNode, int target
         leftNode = parentNode->C[targetCidx];
         rightNode = parentNode->C[siblingCidx];
 
-        // i 범위 아닐 수도 있음
         for (int i = 1; i <= ORD - 1; i++) {
             leftNode->key[i + ORD - 1] = rightNode->key[i];
             leftNode->lenKey++;
         }
 
         leftNode->nextNode = rightNode->nextNode;
-        free(rightNode);
 
         for (int i = targetCidx; i <= parentNode->lenKey - 1; i++) {
             parentNode->key[i] = parentNode->key[i + 1];
@@ -284,7 +272,6 @@ void DeleteMergeForLeaf(struct BTREE* btree, struct Node* parentNode, int target
         }
 
         leftNode->nextNode = rightNode->nextNode;
-        free(rightNode);
 
         for (int i = targetCidx - 1; i <= parentNode->lenKey - 1; i++) {
             parentNode->key[i] = parentNode->key[i + 1];
@@ -295,13 +282,12 @@ void DeleteMergeForLeaf(struct BTREE* btree, struct Node* parentNode, int target
 
         parentNode->lenKey--;
     }
-
+    free(rightNode);
     if (btree->root->lenKey == 0) {
         btree->root = leftNode;
     }
 }
 void DeleteSiblingForLeaf(struct BTREE* btree, struct Node* parentNode, int targetCidx, int siblingCidx) {
-    // 리프노드일 경우
     struct Node* targetCNode = parentNode->C[targetCidx];
     struct Node* siblingNode = parentNode->C[siblingCidx];
 
@@ -326,16 +312,11 @@ void DeleteSiblingForLeaf(struct BTREE* btree, struct Node* parentNode, int targ
     targetCNode->lenKey++;
     return;
 }
-
 void DeleteMerge(struct BTREE* tree, struct Node* parentNode, int targetCidx, int siblingCidx) {
-    // 부모 키 어디다가 저장
-    // 부모 키 뒤에 있는 애들 앞으로 당기고
-    // lenKey -1
-    // target이랑 sibling 합쳐서 target에 다시 넣어,
-    // sibling부터 해서 앞에서 하나씩 당기기
     struct Node* targetNode;
     struct Node* siblingNode;
     int tmp;
+    // 형제가 오른쪽
     if (targetCidx < siblingCidx) {
         targetNode = parentNode->C[targetCidx];
         siblingNode = parentNode->C[siblingCidx];
@@ -360,6 +341,7 @@ void DeleteMerge(struct BTREE* tree, struct Node* parentNode, int targetCidx, in
         targetNode->lenKey += siblingNode->lenKey + 1;
         parentNode->C[targetCidx] = targetNode;
     }
+        //형제가 왼쪽
     else {
         siblingNode = parentNode->C[targetCidx];
         targetNode = parentNode->C[siblingCidx];
@@ -385,30 +367,24 @@ void DeleteMerge(struct BTREE* tree, struct Node* parentNode, int targetCidx, in
         targetNode->lenKey += siblingNode->lenKey + 1;
         parentNode->C[targetCidx] = targetNode;
     }
+    free(siblingNode);
     if (tree->root->lenKey == 0) {
         tree->root = targetNode;
     }
     return;
 }
-
 void DeleteSibling(struct BTREE* btree, struct Node* parentNode, int targetCidx, int siblingCidx) {
     struct Node* targetCNode = parentNode->C[targetCidx];
     struct Node* siblingNode;
-    if (targetCidx < siblingCidx) { // 오른쪽 형제에서 가지고옴지 //왼쪽으로 머
+    if (targetCidx < siblingCidx) {// 오른쪽에서 왼쪽으로 머지
         siblingNode = parentNode->C[siblingCidx];
         targetCNode->key[targetCNode->lenKey + 1] = parentNode->key[targetCidx];
         targetCNode->lenKey++;
-        // 형제 노드 첫 키 빼고 하나씩 당기기
-        // 형제 노드 키 값 -1
-        // 부모노드 키 형제 노드 키로 바꾸기
         parentNode->key[targetCidx] = siblingNode->key[1];
         for (int i = 1; i <= siblingNode->lenKey - 1; i++) {
 
             siblingNode->key[i] = siblingNode->key[i + 1];
         }
-        // 형제 노드 첫 자식 가져오기
-        // 형제 노드 첫 자식 타깃 노드를 마지막 자식으로 추가하기
-        // 형제 노드 자식들 앞으로 떙기기
         targetCNode->C[targetCNode->lenKey + 1] = siblingNode->C[1];
         for (int i = 1; i <= siblingNode->lenKey; i++) {
             siblingNode->C[i] = siblingNode->C[i + 1];
@@ -416,7 +392,7 @@ void DeleteSibling(struct BTREE* btree, struct Node* parentNode, int targetCidx,
         siblingNode->lenKey--;
     }
 
-    else {//왼쪽 형제에서 오른쪽으로 머지
+    else {//왼쪽 형제에서 오른쪽
         siblingNode = parentNode->C[siblingCidx];
         for (int i = targetCNode->lenKey; i >= 1; i--) {
             targetCNode->key[i + 1] = targetCNode->key[i];
@@ -432,8 +408,7 @@ void DeleteSibling(struct BTREE* btree, struct Node* parentNode, int targetCidx,
     }
     return;
 }
-
-int DeleteFromTree(struct BTREE* btree, struct Node* curNode, int dVal) {
+void DeleteFromTree(struct BTREE* btree, struct Node* curNode, int dVal) {
     int retval = MIN;
     int i = 1;
     while (i <= curNode->lenKey && curNode->key[i] < dVal) {
@@ -518,7 +493,7 @@ int DeleteFromTree(struct BTREE* btree, struct Node* curNode, int dVal) {
                 if (curNode->lenKey == 0) {
                     free(curNode);
                 }
-                return 0;
+                return;
             }
             DeleteFromTree(btree, curNode->C[i], dVal);
             if (curNode->lenKey == 0) {
