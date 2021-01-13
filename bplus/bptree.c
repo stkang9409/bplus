@@ -50,7 +50,7 @@ struct BTREE* initTree() {
     struct BTREE* tree = malloc(sizeof(struct BTREE));
     if (tree == NULL) {
         printf("메모리 할당 오류");
-        return;
+        return 0;
     }
     tree->root = MIN;
     return tree;
@@ -59,7 +59,7 @@ struct Node* createNode() {
     struct Node* newNode = malloc(sizeof(struct Node));
     if (newNode == NULL) {
         printf("메모리 할당 오류");
-        return;
+        return 0;
     }
     newNode->isLeaf = true;
     newNode->lenKey = 0;
@@ -105,7 +105,7 @@ void BtreeSearch(struct Node* node, int searchValue, int level) {
 void PrintByDFS(struct Node* node, int cnt) {
     if (node->isLeaf) {
         for (int i = 1; i <= cnt; i++) {
-            printf("--------------------|");
+            printf("--------|");
         }
         for (int i = 1; i <= node->lenKey; i++) {
             printf("%4d", node->key[i]);
@@ -116,7 +116,7 @@ void PrintByDFS(struct Node* node, int cnt) {
         for (int i = 1; i <= node->lenKey; i++) {
             PrintByDFS(node->C[i], cnt + 1);
             for (int i = 1; i <= cnt; i++) {
-                printf("--------------------|");
+                printf("--------|");
             }
             printf("%d            \n", node->key[i]);
         }
