@@ -51,13 +51,11 @@ int main() {
     for (int i = 1; i < 1000; i++) {
 
         int r = out_arr[i];
-        BtreeSearch(BTree->root,r,0);
+//        BtreeSearch(BTree->root,r,0);
         DeleteBTree(BTree,BTree->root , r);
     }
 
-    for (int i = 1; i < 101; i++) {
-        BtreeInsertNode(BTree, i);
-    }
+
     PrintByDFS(BTree->root,0);
 }
 //초기화
